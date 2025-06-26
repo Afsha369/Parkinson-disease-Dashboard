@@ -40,7 +40,7 @@ streamlit run streamlit_app.py
 ---
 
 ## 🌍 Deployed Application
-🔗 Live here
+🔗 Live here - https://pdwebpage.streamlit.app/
 
 ---
 
