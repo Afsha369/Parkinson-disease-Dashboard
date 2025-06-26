@@ -18,8 +18,8 @@ cd parkinsons-disease-dashboard
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 
-🌍 Deployed Application (in progress)
-🔗 Live here - https://parkinson-disease-dashboard-by-afsha.streamlit.app/
+🌍 Deployed Application
+🔗 Live here - pdwebpage.streamlit.app
 
 📚 Dataset Source
 https://www.kaggle.com/datasets/rabieelkharoua/parkinsons-disease-dataset-analysis/data
