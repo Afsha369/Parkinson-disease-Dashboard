@@ -33,7 +33,6 @@ This app is for educational purposes only. It’s not intended for clinical diag
 
 ```bash
 git clone https://github.com/Afsha369/parkinsons-disease-dashboard.git
-cd parkinsons-disease-dashboard
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
