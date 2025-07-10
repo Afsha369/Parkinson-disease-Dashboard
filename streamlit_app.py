@@ -9,6 +9,7 @@ import seaborn as sns
 # Page config
 st.set_page_config(page_title="Parkinson's Disease Prediction", layout="wide")
 
+# Injecting custom CSS for font and style
 st.markdown("""
     <style>
     label, .stSlider label, .stSelectbox label {
@@ -92,7 +93,7 @@ st.markdown("<h4 style='font-weight: bold; font-size: 22px;'>Constipation</h4>",
 constip = st.selectbox('', [0, 1], format_func=lambda x: 'Yes' if x == 1 else 'No', key='constip')
 
 
-# Collect input
+# Collecting input
 user_input = {
     'Age': age,
     'Gender': gender,
@@ -115,12 +116,46 @@ input_df = pd.DataFrame([user_input], columns=feature_names)
 # Prediction button
 if st.button("🧪 Detect Parkinson's Disease"):
 
-    # Show user input summary
+    # Mapping for display names and binary values
+    label_mapping = {
+        "Gender": {0: "Male", 1: "Female"},
+        "FamilyHistoryParkinsons": {0: "No", 1: "Yes"},
+        "TraumaticBrainInjury": {0: "No", 1: "Yes"},
+        "Tremor": {0: "No", 1: "Yes"},
+        "Rigidity": {0: "No", 1: "Yes"},
+        "Bradykinesia": {0: "No", 1: "Yes"},
+        "PosturalInstability": {0: "No", 1: "Yes"},
+        "SpeechProblems": {0: "No", 1: "Yes"},
+        "SleepDisorders": {0: "No", 1: "Yes"},
+        "Constipation": {0: "No", 1: "Yes"},
+    }
+
+    display_labels = {
+        "Age": "Age",
+        "Gender": "Gender",
+        "FamilyHistoryParkinsons": "Family History Parkinson's",
+        "TraumaticBrainInjury": "Traumatic Brain Injury",
+        "UPDRS": "UPDRS",
+        "MoCA": "MoCA",
+        "FunctionalAssessment": "Functional Assessment",
+        "Tremor": "Tremor",
+        "Rigidity": "Rigidity",
+        "Bradykinesia": "Bradykinesia",
+        "PosturalInstability": "Postural Instability",
+        "SpeechProblems": "Speech Problems",
+        "SleepDisorders": "Sleep Disorders",
+        "Constipation": "Constipation"
+    }
+
     st.markdown("## 🧾 Entered Patient Features")
     for key, value in user_input.items():
-        st.markdown(f"<p style='font-size:18px'><strong>{key}:</strong> {value}</p>", unsafe_allow_html=True)
+        display_label = display_labels.get(key, key)
+        if key in label_mapping:
+            readable_value = label_mapping[key].get(value, value)
+        else:
+            readable_value = value
+        st.markdown(f"<p style='font-size:18px'><strong>{display_label}:</strong> {readable_value}</p>", unsafe_allow_html=True)
 
-    # Predict
     prediction = model.predict(input_df)[0]
     probability = model.predict_proba(input_df)[0][1]
 
@@ -171,7 +206,6 @@ if st.button("🧪 Detect Parkinson's Disease"):
         'Contribution': shap_1d
     }).sort_values(by='Contribution', key=lambda x: abs(x), ascending=False)
 
-    # Section Header
     st.markdown("## 🔍 Top Feature Contributions (SHAP)")
 
     # Prepare SHAP data as % and style by sign
@@ -185,11 +219,12 @@ if st.button("🧪 Detect Parkinson's Disease"):
 
     shap_df_display['Contribution (%)'] = shap_df_display['Contribution (%)'].apply(format_contribution)
 
-    # Build styled HTML table
+    # Building styled HTML table
     shap_html_table = shap_df_display[['Feature', 'Contribution (%)']].to_html(
         escape=False, index=False, classes='shap-table'
     )
 
+    # Injecting CSS
     st.markdown("""
         <style>
         .shap-table {
@@ -212,10 +247,8 @@ if st.button("🧪 Detect Parkinson's Disease"):
         </style>
     """, unsafe_allow_html=True)
 
-    # Show the table
     st.markdown(shap_html_table, unsafe_allow_html=True)
 
-    # Explanation legend
     st.markdown("""
     <div style="margin-top:10px; font-size:16px;">
         <strong style="color:red;">Red</strong>: Feature is contributing <em>toward</em> a Parkinson's diagnosis<br>
@@ -223,7 +256,6 @@ if st.button("🧪 Detect Parkinson's Disease"):
     </div>
     """, unsafe_allow_html=True)
 
-    # SHAP plot
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.barplot(x='Contribution', y='Feature', data=shap_df.head(10), palette='coolwarm', ax=ax)
     ax.set_title("Top Features Influencing Prediction")
